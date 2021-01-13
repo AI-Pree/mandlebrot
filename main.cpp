@@ -3,13 +3,12 @@
 #include <GLFW/glfw3.h>
 #include "headers/context.h"
 
-int main() {
+int main(int argc, char ** argv) {
+	double frametate = 0.0;
+
 	//initialisng the glfw
 	init_glfw();
 	
-	//registering error callback
-	glfwSetErrorCallback(error_callback);
-
 	// creating a window object	
 	GLFWwindow* window = glfwCreateWindow(800, 600, "Mandlebrot", NULL, NULL);
 	
@@ -18,25 +17,48 @@ int main() {
 		glfwTerminate();
 		return -1;
 	}
-	
+
 	glfwMakeContextCurrent(window);	
 	
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	{
+		std::cout << "Failed to initialize GLAD" << std::endl;
+		return -1;
+	}
+	
+	double previous_time = glfwGetTime();
+	std::string frame_per_sec = "0";
+
+	// all of my rendering activites goes here
 	while(!glfwWindowShouldClose(window)){
+		// checking the fps
+		fps_counter(previous_time, frametate, frame_per_sec);
+		
+		// counting frames per sec
+		frametate++;
+		std::cout << "FPS: " << frame_per_sec << std::endl;
+		
+		//registering error callback
+		glfwSetErrorCallback(error_callback);
+		
+		//processing input
+		processInput(window);
+			
+		// rendering
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		// check and call events and swap the buffer
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 
+ 
 
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-	{
-    		std::cout << "Failed to initialize GLAD" << std::endl;
-		return -1;
-	} 
-
+	//resizing the window size
 	glfwSetFramebufferSizeCallback(window, frame_buffer_size_callback);
 	//glViewport(0, 0, 800, 600);
 
 	glfwTerminate();
 	return 0;
-
 }
