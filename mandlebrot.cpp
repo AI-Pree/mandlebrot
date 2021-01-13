@@ -1,19 +1,17 @@
 #include <iostream>
 #include <vector>
 
-typedef std::vector<float> vf;
-
-constexpr int total_recursion = 1000000; 
-int recursion_index = 0;
-float eq_mandlebrot = 0;
-
-// n is the index of recurison
+// n is the complex number for the mandlebrot equation
 void mandlebrot(int n) {
-
-	recursion_index ++;
-	if (recursion_index < total_recursion){
-		return;
+	double mandlebrot_function;
+	if (n == 2){
+		return ;
 	}
+	
+	//funciton for generating the mandlebrot is f(z) = z^2 + c,
+	//where c is the complex number ax+ bi, and i is the imaginary nubmer
+	mandlebrot_function = 
+	
 	mandlebrot(recursion_index);
 }
 
