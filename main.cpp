@@ -1,35 +1,42 @@
 #include <iostream>
-#include <vector>
+#include "headers/glad.h"
+#include <GLFW/glfw3.h>
+#include "headers/context.h"
 
-
-typedef std::vector<float> vf;
-
-
-constexpr int total_recursion = 1000000; 
-
-
-int recursion_index = 0;
-
-float eq_mandlebrot = 0;
-
-
-// n is the index of recurison
-void mandlebrot_function(int n) {
+int main() {
+	//initialisng the glfw
+	init_glfw();
 	
-	recursion_index ++;
+	//registering error callback
+	glfwSetErrorCallback(error_callback);
+
+	// creating a window object	
+	GLFWwindow* window = glfwCreateWindow(800, 600, "Mandlebrot", NULL, NULL);
 	
-	if (recursion_index < total_recursion){
-		return;
+	if (window == NULL) {
+		std::cout <<  "failed to create a window" << std::endl;
+		glfwTerminate();
+		return -1;
+	}
+	
+	glfwMakeContextCurrent(window);	
+	
+	while(!glfwWindowShouldClose(window)){
+		glfwSwapBuffers(window);
+		glfwPollEvents();
 	}
 
-	mandlebrot_function(recursion_index);
-}
 
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	{
+    		std::cout << "Failed to initialize GLAD" << std::endl;
+		return -1;
+	} 
 
+	glfwSetFramebufferSizeCallback(window, frame_buffer_size_callback);
+	//glViewport(0, 0, 800, 600);
 
-int main(void){
-
-	mandlebrot_function(recursion_index);
-
+	glfwTerminate();
 	return 0;
+
 }
