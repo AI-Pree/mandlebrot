@@ -3,6 +3,12 @@
 #include <GLFW/glfw3.h>
 #include "headers/context.h"
 
+//enable nvidia graphics
+#ifdef __cpluscplus
+extern "C" (
+	_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+)
+#endif
 
 //adding vertex shader code source
 
@@ -29,6 +35,7 @@ float vertices[] =
 	 1.0f,	-1.0f,	-0.0f	
 };
 */
+
 unsigned int indices[] = 
 {
 	0, 1, 2,
@@ -38,9 +45,9 @@ unsigned int indices[] =
 
 //forming a trianlge from the vertex data
 
-float triangle_vertices[] = {
-//	x	y	z
-	
+float triangle_vertices[] = 
+{
+//	x	y	z	
 	 0.0f, 	  0.5f,	 0.0f,
 	-0.5f, 	 -0.5f,  0.0f,
 	 0.5f, 	 -0.5f,  0.0f
@@ -84,9 +91,6 @@ int main(int argc, char ** argv) {
 		std::cout << "vector shader wasnt created" << std::endl;
 	}
 		
-	double previous_time = glfwGetTime();
-	std::string frame_per_sec = "0";
-	
 	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
 	glCompileShader(vertexShader);
 
@@ -143,8 +147,12 @@ int main(int argc, char ** argv) {
 
 	// on successful linkage of shaders in the shader program
 	glUseProgram(shaderProgram);
-
-	// all of my rendering activites goes here
+	
+		
+	double previous_time = glfwGetTime();
+	double  frame_per_sec = 0.0;
+	std::cout << "Name of the renderer: " << glGetString(GL_VENDOR) << std::endl;
+	
 	while(!glfwWindowShouldClose(window)){
 		// checking the fps
 		fps_counter(previous_time, frametate, frame_per_sec);
