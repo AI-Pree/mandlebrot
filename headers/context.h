@@ -16,4 +16,4 @@ void error_callback(int, const char* err);
 void processInput(GLFWwindow *window);
 
 //getting the fps
-void fps_counter(double& start, double& framrate, std::string& frame_per_sec);
+void fps_counter(double& start, double& framrate, double& frame_per_sec);
