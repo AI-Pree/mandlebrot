@@ -3,6 +3,13 @@
 #include <GLFW/glfw3.h>
 #include "headers/context.h"
 
+//enable nvidia graphics
+#ifdef __cpluscplus
+extern "C" (
+	_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+)
+#endif
+
 int main(int argc, char ** argv) {
 	double frametate = 0.0;
 
@@ -27,7 +34,8 @@ int main(int argc, char ** argv) {
 	}
 	
 	double previous_time = glfwGetTime();
-	std::string frame_per_sec = "0";
+	double  frame_per_sec = 0.0;
+	std::cout << "Name of the renderer: " << glGetString(GL_VENDOR) << std::endl;
 
 	// all of my rendering activites goes here
 	while(!glfwWindowShouldClose(window)){
@@ -36,7 +44,7 @@ int main(int argc, char ** argv) {
 		
 		// counting frames per sec
 		frametate++;
-		std::cout << "FPS: " << frame_per_sec << std::endl;
+//		std::cout << "FPS: " << frame_per_sec << std::endl;
 		
 		//registering error callback
 		glfwSetErrorCallback(error_callback);

@@ -31,10 +31,10 @@ void processInput(GLFWwindow *window){
 	}
 }
 
-void fps_counter(double& start, double& framerate,std::string& frame_per_sec){
+void fps_counter(double& start, double& framerate, double& frame_per_sec){
 	double current = glfwGetTime();
 	if ((current - start) >= 1){
-		frame_per_sec = std::to_string(framerate);
+		frame_per_sec = framerate;
 		framerate = 0;
 		start = current;
 	}
