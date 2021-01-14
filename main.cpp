@@ -20,10 +20,10 @@ const char *vertexShaderSource = "#version 330 core\n"
 	"}\0";
 
 const char *fragmentShaderSource = "#version 330 core\n"
-"out vec4 FragColor;\n"
-"void main() {\n"
-"	FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-"}\0";
+	"out vec4 FragColor;\n"
+	"void main() {\n"
+	"	FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+	"}\0";
 
 /*
 float vertices[] = 
@@ -74,6 +74,13 @@ int main(int argc, char ** argv) {
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		return -1;
 	}
+	
+	//creating the vertex array object
+	unsigned int VAO;
+	glGenVertexArrays(1, &VAO);
+	
+	//bind the vertex array
+	glBindVertexArray(VAO);
 
 	//creating a vertex buffer
 	unsigned int VBO;
@@ -82,7 +89,7 @@ int main(int argc, char ** argv) {
 	//target for binding the buffer
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(triangle_vertices), triangle_vertices, GL_STATIC_DRAW);
-	
+
 	//creating a vertex shader
 	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	
@@ -145,10 +152,16 @@ int main(int argc, char ** argv) {
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
-	// on successful linkage of shaders in the shader program
-	glUseProgram(shaderProgram);
+
+	//linking vertex attribute the shaderprogram
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
+	glEnableVertexAttribArray(0);	
 	
-		
+	//configuring the VBO and VAO
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glBindVertexArray(0);
+
 	double previous_time = glfwGetTime();
 	double  frame_per_sec = 0.0;
 	std::cout << "Name of the renderer: " << glGetString(GL_VENDOR) << std::endl;
@@ -170,6 +183,13 @@ int main(int argc, char ** argv) {
 		// rendering
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
+	
+		//drawing the object
+		glUseProgram(shaderProgram);
+		glBindVertexArray(VAO); // needed only when there is multiple VAO 
+
+		//draw the triangle from the VAO
+		glDrawArrays(GL_TRIANGLES, 0, 3);
 
 		// check and call events and swap the buffer
 		glfwSwapBuffers(window);
@@ -179,6 +199,11 @@ int main(int argc, char ** argv) {
 	//resizing the window size
 	glfwSetFramebufferSizeCallback(window, frame_buffer_size_callback);
 	//glViewport(0, 0, 800, 600);
+	
+	//clearing everything
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
+	glDeleteProgram(shaderProgram);
 
 	glfwTerminate();
 	return 0;
