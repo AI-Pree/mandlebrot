@@ -3,7 +3,7 @@
 #include <GLFW/glfw3.h>
 #include "headers/context.h"
 
-/*
+
 float vertices[] = 
 {	
 //	  x	  y	  z
@@ -12,7 +12,7 @@ float vertices[] =
  	-1.0f, 	 1.0f,  -0.0f,
 	 1.0f,	-1.0f,	-0.0f	
 };
-*/
+
 unsigned int indices[] = 
 {
 	0, 1, 2,
@@ -20,31 +20,25 @@ unsigned int indices[] =
 	
 };
 
-//forming a trianlge from the vertex data
-
-float triangle_vertices[] = {
-//	x	y	z
-	
-	 0.0f, 	  0.5f,	 0.0f,
-	-0.5f, 	 -0.5f,  0.0f,
-	 0.5f, 	 -0.5f,  0.0f
-};
-
-
 
 int main(int argc, char ** argv) {
 	double frametate = 0.0;
 	
-	//creating a vertex buffer
-	unsigned int VBO;
+	//creating buffers for storing data
+	unsigned int VAO, VBO, EBO;
+	
+	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &EBO);
 	
-	//target for binding the buffer
+	glBindVertexArray(VAO);
+
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(triangle_vertices), triangle_vertices, GL_STATIC_DRAW);
-	
-	
-	
+	glBufferData(GL_ARRAY_BUFFER,sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+
+
+	//initialisng the glfw
 	init_glfw();
 	
 	// creating a window object	
