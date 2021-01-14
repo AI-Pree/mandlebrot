@@ -20,10 +20,10 @@ const char *vertexShaderSource = "#version 330 core\n"
 	"}\0";
 
 const char *fragmentShaderSource = "#version 330 core\n"
-"out vec4 FragColor;\n"
-"void main() {\n"
-"	FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-"}\0";
+	"out vec4 FragColor;\n"
+	"void main() {\n"
+	"	FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+	"}\0";
 
 /*
 float vertices[] = 
@@ -82,7 +82,11 @@ int main(int argc, char ** argv) {
 	//target for binding the buffer
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(triangle_vertices), triangle_vertices, GL_STATIC_DRAW);
-	
+
+	//creating the vertex array object
+	unsigned int VAO;
+	glGenVertexArrays(1, &VAO);
+
 	//creating a vertex shader
 	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	
@@ -145,10 +149,20 @@ int main(int argc, char ** argv) {
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
-	// on successful linkage of shaders in the shader program
+
+	//linking vertex attribute the shaderprogram
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
+	glEnableVertexAttribArray(0);	
+
+	// rendering the object
 	glUseProgram(shaderProgram);
 	
-		
+	//bind the vertex array
+	glBindVertexArray(VAO);
+	
+	//draw the triangle from the VAO
+	glDrawArrays(GL_TRIANGLES, 0, 3);
+
 	double previous_time = glfwGetTime();
 	double  frame_per_sec = 0.0;
 	std::cout << "Name of the renderer: " << glGetString(GL_VENDOR) << std::endl;
