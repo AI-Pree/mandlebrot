@@ -5,7 +5,8 @@
 #include <math.h>
 #include <string.h>
 #include <fstream>
-
+#include <sstream>
+#include <iostream>
 //enable nvidia graphics
 #ifdef __cpluscplus
 extern "C" (
@@ -14,38 +15,33 @@ extern "C" (
 #endif
 
 // reading file for the shader output program
-std::string read_shader_files(char *path){
+std::string read_shader_files(const char *path){
 	std::string shader_code;
 	std::ifstream file(path, std::ios_base::in);	
 	
-	if (!file) {
+	if (!file.good()) {
 		std::cout << "The file did not open." << std::endl;
 		return "";
 	}	
+	std::stringstream shaderStream;
+	shaderStream << file.rdbuf();
 
-	std::string line = "";
-	while (std::getline(file, line)) {
-		shader_code.append(line + '\n');
-	}
+	//closing the handles
 	file.close();
+
+	//converting the stream to string
+	shader_code = shaderStream.str();
+
 	return shader_code;
 }
 
 //adding vertex shader code source
+std::string vertex_source = read_shader_files("vertex_shader.vert");
+const char *vertexShaderSource = vertex_source.c_str();
 
-const char *vertexShaderSource = "#version 330 core\n"
-	"layout (location = 0) in vec3 aPos;\n"
-	"void main()\n"
-	"{\n"
-	"	gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-	"}\0";
+std::string frag_source = read_shader_files("fragment_shader.frag");
+const char *fragmentShaderSource = frag_source.c_str();
 
-const char *fragmentShaderSource = "#version 330 core\n"
-	"out vec4 FragColor;\n"
-	"uniform vec4 change_color; \n"
-	"void main() {\n"
-	"	FragColor = change_color;\n"
-	"}\0";
 
 /*
 float vertices[] = 
@@ -220,6 +216,7 @@ int main(int argc, char ** argv) {
 		float red_color = (sin(getTime)/2.0f) + 0.5f;
 		int vertexColorLocation = glGetUniformLocation(shaderProgram, "change_color");
 	
+		
 
 		//drawing the object
 		glUseProgram(shaderProgram);
