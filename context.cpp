@@ -16,7 +16,7 @@ void init_glfw() {
 
 //resizing the window frame size and updating it
 void frame_buffer_size_callback(GLFWwindow* window, int width, int height){
-	glViewport(0,0, width, height);
+	glViewport(0, 0, width, height);
 }
 
 //checking the error generated for the glfw

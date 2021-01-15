@@ -2,13 +2,34 @@
 #include "headers/glad.h"
 #include <GLFW/glfw3.h>
 #include "headers/context.h"
+#include <math.h>
+#include <string.h>
+#include <fstream>
 
 //enable nvidia graphics
 #ifdef __cpluscplus
 extern "C" (
-	_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+	_declspec(dllexport) DWORD NvOptimusEnablement = 0x0001.0f.0;
 )
 #endif
+
+// reading file for the shader output program
+std::string read_shader_files(char *path){
+	std::string shader_code;
+	std::ifstream file(path, std::ios_base::in);	
+	
+	if (!file) {
+		std::cout << "The file did not open." << std::endl;
+		return "";
+	}	
+
+	std::string line = "";
+	while (std::getline(file, line)) {
+		shader_code.append(line + '\n');
+	}
+	file.close();
+	return shader_code;
+}
 
 //adding vertex shader code source
 
@@ -21,18 +42,19 @@ const char *vertexShaderSource = "#version 330 core\n"
 
 const char *fragmentShaderSource = "#version 330 core\n"
 	"out vec4 FragColor;\n"
+	"uniform vec4 change_color; \n"
 	"void main() {\n"
-	"	FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+	"	FragColor = change_color;\n"
 	"}\0";
 
 /*
 float vertices[] = 
 {	
 //	  x	  y	  z
-	-1.0f,	-1.0f,	-0.0f,
-       	 1.0f,	 1.0f,  -0.0f,
- 	-1.0f, 	 1.0f,  -0.0f,
-	 1.0f,	-1.0f,	-0.0f	
+	-1.0f,	-0.1f,	-0.0f,
+       	 1.0f,	 0.1f,  -0.0f,
+ 	-1.0f, 	 0.1f,  -0.0f,
+	 1.0f,	-0.1f,	-0.0f	
 };
 */
 
@@ -41,21 +63,16 @@ float vertices[] =
 float vertices[] = 
 {
 //	x	y	z	
-	 0.5f, 	  0.5f,	 0.0f,
-	-0.5f, 	 -0.5f,  0.0f,
-	 0.5f, 	 -0.5f,  0.0f,
-	
-	 // second triangle
-
-	-0.5f,	  0.5f,	 0.0f,
-	-0.5f,	 -0.5f,  0.0f,
-	 0.5f,	 -0.5f,  0.0f
+	 1.0f, 	  1.0f,	 0.0f,
+	 1.0f, 	 -1.0f,  0.0f,
+	-1.0f,	 -1.0f,  0.0f,
+	-1.0f,	  1.0f,  0.0f
 };
 
 unsigned int indices[] = 
 {
-	0, 1, 2,
-	1, 3, 0
+	0, 1, 3,
+	1, 2, 3
 };
 
 int main(int argc, char ** argv) {
@@ -139,6 +156,8 @@ int main(int argc, char ** argv) {
 	//checking if the fragment shader compiled successully
 	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
 	
+	std::cout << "print after fragnet shader was compiled" << std::endl;
+
 	if (!success)
 	{
 		glGetShaderInfoLog(fragmentShader, 512, NULL, infolog);
@@ -173,8 +192,7 @@ int main(int argc, char ** argv) {
 	double previous_time = glfwGetTime();
 	double  frame_per_sec = 0.0;
 	std::cout << "Name of the renderer: " << glGetString(GL_VENDOR) << std::endl;
-
-
+	
 	//drawing in the polygon mode
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
@@ -195,11 +213,21 @@ int main(int argc, char ** argv) {
 		// rendering
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
+		
+		//get different colors
+		
+		float getTime = glfwGetTime();
+		float red_color = (sin(getTime)/2.0f) + 0.5f;
+		int vertexColorLocation = glGetUniformLocation(shaderProgram, "change_color");
 	
+
 		//drawing the object
 		glUseProgram(shaderProgram);
 		glBindVertexArray(VAO); // needed only when there is multiple VAO 
-		
+	
+		//calling uniform color after the shader program add the uniform variable
+		glUniform4f(vertexColorLocation, red_color, 0.0f , 0.0f, 1.0f);
+
 		//draw the triangle from the VAO
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);		
 		glBindVertexArray(0);
