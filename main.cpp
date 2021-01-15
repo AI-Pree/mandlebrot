@@ -36,21 +36,26 @@ float vertices[] =
 };
 */
 
+//forming a trianlge from the vertex data
+
+float vertices[] = 
+{
+//	x	y	z	
+	 0.5f, 	  0.5f,	 0.0f,
+	-0.5f, 	 -0.5f,  0.0f,
+	 0.5f, 	 -0.5f,  0.0f,
+	
+	 // second triangle
+
+	-0.5f,	  0.5f,	 0.0f,
+	-0.5f,	 -0.5f,  0.0f,
+	 0.5f,	 -0.5f,  0.0f
+};
+
 unsigned int indices[] = 
 {
 	0, 1, 2,
-	0, 3, 1
-	
-};
-
-//forming a trianlge from the vertex data
-
-float triangle_vertices[] = 
-{
-//	x	y	z	
-	 0.0f, 	  0.5f,	 0.0f,
-	-0.5f, 	 -0.5f,  0.0f,
-	 0.5f, 	 -0.5f,  0.0f
+	1, 3, 0
 };
 
 int main(int argc, char ** argv) {
@@ -81,6 +86,14 @@ int main(int argc, char ** argv) {
 	
 	//bind the vertex array
 	glBindVertexArray(VAO);
+	
+	//creating a element object buffer
+	unsigned int EBO;
+       	glGenBuffers(1, &EBO);
+
+	//bind the buffer for the elemen object buffer
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 	//creating a vertex buffer
 	unsigned int VBO;
@@ -88,7 +101,7 @@ int main(int argc, char ** argv) {
 	
 	//target for binding the buffer
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(triangle_vertices), triangle_vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
 	//creating a vertex shader
 	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -146,12 +159,7 @@ int main(int argc, char ** argv) {
 	if(!success){
 		glGetProgramInfoLog(shaderProgram, 512, NULL, infolog);
 		std::cout << "Error while linking the shader in the shader program\n" << infolog << std::endl;
-	}
-	
-	//deleting the shader objects are linking it to the program
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
-
+	}	
 
 	//linking vertex attribute the shaderprogram
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
@@ -165,7 +173,11 @@ int main(int argc, char ** argv) {
 	double previous_time = glfwGetTime();
 	double  frame_per_sec = 0.0;
 	std::cout << "Name of the renderer: " << glGetString(GL_VENDOR) << std::endl;
-	
+
+
+	//drawing in the polygon mode
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
 	while(!glfwWindowShouldClose(window)){
 		// checking the fps
 		fps_counter(previous_time, frametate, frame_per_sec);
@@ -187,9 +199,10 @@ int main(int argc, char ** argv) {
 		//drawing the object
 		glUseProgram(shaderProgram);
 		glBindVertexArray(VAO); // needed only when there is multiple VAO 
-
+		
 		//draw the triangle from the VAO
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);		
+		glBindVertexArray(0);
 
 		// check and call events and swap the buffer
 		glfwSwapBuffers(window);
@@ -200,9 +213,14 @@ int main(int argc, char ** argv) {
 	glfwSetFramebufferSizeCallback(window, frame_buffer_size_callback);
 	//glViewport(0, 0, 800, 600);
 	
+	//deleting the shader objects are linking it to the program
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
+		
 	//clearing everything
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &EBO);
 	glDeleteProgram(shaderProgram);
 
 	glfwTerminate();
