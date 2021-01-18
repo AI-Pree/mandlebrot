@@ -7,11 +7,17 @@ in vec4 gl_FragCoord;
 out vec4 fragColor;
 // in vec3 hybrid_color;
 
-//uniform vec4 change_color;
+uniform vec4 change_color;
+
+// making my mandlebrot colorful
+vec4 c0 = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+vec4 c1 = vec4(0.0f, 0.2f, 0.5f, 1.0f);
+vec4 c2 = vec4(1.0f, 0.8f, 0.0f, 1.0f);
+vec4 c3 = vec4(1.0f, 0.0f, 0.4f, 1.0f);
 
 int mandlebrot() {
-	float real = (gl_FragCoord.x/800.0 - 0.55)*4.0;
-	float imag = (gl_FragCoord.y/680.0 - 0.5)*4.0;
+	float real = (gl_FragCoord.x/800 -  0.6)*4;
+	float imag = (gl_FragCoord.y/650 -  0.5)*4;
 	float initial_real = real;
 	float initial_imag = imag;
 	
@@ -21,13 +27,13 @@ int mandlebrot() {
 
 	while (iteration < MAX_ITER)
     	{
-        	float tmp_real = real;
+        	float tmp = real;
         	real = (real * real - imag * imag) + initial_real;
-        	imag = (2.0 * tmp_real * imag) + initial_imag;
+        	imag = (2.0 * tmp * imag) + initial_imag;
          
-        	float dist = real * real + imag * imag;
+        	displacement = real * real + imag * imag;
          
-        	if (dist > 4.0)
+        	if (displacement > 4.0)
         	break;
  
         	++iteration;
