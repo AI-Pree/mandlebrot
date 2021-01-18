@@ -7,6 +7,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+
 //enable nvidia graphics
 #ifdef __cpluscplus
 extern "C" (
@@ -42,33 +43,22 @@ const char *vertexShaderSource = vertex_source.c_str();
 std::string frag_source = read_shader_files("fragment_shader.frag");
 const char *fragmentShaderSource = frag_source.c_str();
 
-
-/*
 float vertices[] = 
 {	
 //	  x	  y	  z
-	-1.0f,	-0.1f,	-0.0f,
-       	 1.0f,	 0.1f,  -0.0f,
- 	-1.0f, 	 0.1f,  -0.0f,
-	 1.0f,	-0.1f,	-0.0f	
+	-1.0f,	-1.0f,	-0.0f,
+       	 1.0f,	 1.0f,  -0.0f,
+ 	-1.0f, 	 1.0f,  -0.0f,
+	 1.0f,	-1.0f,	-0.0f	
 };
-*/
 
 //forming a trianlge from the vertex data
 
-float vertices[] = 
-{
-//	x	y	z	
-	 1.0f, 	  1.0f,	 0.0f,
-	 1.0f, 	 -1.0f,  0.0f,
-	-1.0f,	 -1.0f,  0.0f,
-	-1.0f,	  1.0f,  0.0f
-};
 
 unsigned int indices[] = 
 {
-	0, 1, 3,
-	1, 2, 3
+	0, 1, 2,
+	0, 3, 1
 };
 
 int main(int argc, char ** argv) {
@@ -177,9 +167,13 @@ int main(int argc, char ** argv) {
 	}	
 
 	//linking vertex attribute the shaderprogram
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3* sizeof(float), (void*) 0);
 	glEnableVertexAttribArray(0);	
-	
+
+
+	//glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(3 * sizeof(float)));
+	//glEnableVertexAttribArray(1);
+
 	//configuring the VBO and VAO
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -223,10 +217,11 @@ int main(int argc, char ** argv) {
 		glBindVertexArray(VAO); // needed only when there is multiple VAO 
 	
 		//calling uniform color after the shader program add the uniform variable
-		glUniform4f(vertexColorLocation, red_color, 0.0f , 0.0f, 1.0f);
+//		glUniform4f(vertexColorLocation, red_color, 0.0f , 0.0f, 1.0f);
 
 		//draw the triangle from the VAO
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);		
+		//glDrawArrays(GL_TRIANGLES, 0, 3);
 		glBindVertexArray(0);
 
 		// check and call events and swap the buffer
