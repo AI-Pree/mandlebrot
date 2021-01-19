@@ -1,7 +1,7 @@
 # Mandlebrot
 Rendering mandlebrot set using opengl
 
-[!img](mandlebrot.png)
+![Alt text](mandlebrot.png)
 
 # Reference
 https://learnopengl.com/
