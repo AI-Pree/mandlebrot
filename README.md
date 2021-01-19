@@ -1,4 +1,4 @@
-# mandlebrot
+# Mandlebrot
 Rendering mandlebrot set using opengl
 
 # Reference
