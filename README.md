@@ -1,5 +1,5 @@
 # mandlebrot
 Rendering mandlebrot set using opengl
 
-#Reference
+# Reference
 https://learnopengl.com/
